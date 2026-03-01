@@ -410,7 +410,17 @@ function arrowSelect(items, { title = "", initialIndex = 0 } = {}) {
 
 function commandExists(cmd) {
   try {
-    const checkCmd = process.platform === "win32" ? `where ${cmd}` : `command -v ${cmd}`;
+    if (process.platform === "win32") {
+      try {
+        execSync(`where ${cmd}`, { stdio: "ignore" });
+        return true;
+      } catch (e) {
+         // Fallback: try executing the command with --version
+         execSync(`${cmd} --version`, { stdio: "ignore" });
+         return true;
+      }
+    }
+    const checkCmd = `command -v ${cmd}`;
     execSync(checkCmd, { stdio: "ignore" });
     return true;
   } catch { return false; }
