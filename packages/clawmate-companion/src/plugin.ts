@@ -129,6 +129,12 @@ function buildSoulPersonaSection(characterId: string, personaText: string): stri
     `## ClawMate Companion Persona (${characterId})`,
     "",
     personaText.trim(),
+    "",
+    "## Capabilities & Tools",
+    "You have the ability to take selfies and send photos. When the user asks for a photo, or when you decide to send one based on the conversation context:",
+    "1. FIRST, call the `clawmate_prepare_selfie` tool to get the scene/time context.",
+    "2. THEN, use the information from the first step to call `clawmate_generate_selfie` with a detailed English prompt describing the photo.",
+    "DO NOT output text like \"[Sends a photo]\" without calling the tools. The tools ARE how you send photos.",
     SOUL_SECTION_END,
   ].join("\n");
 }
