@@ -411,13 +411,26 @@ function arrowSelect(items, { title = "", initialIndex = 0 } = {}) {
 function commandExists(cmd) {
   try {
     if (process.platform === "win32") {
+      // Try direct check first
       try {
         execSync(`where ${cmd}`, { stdio: "ignore" });
         return true;
       } catch (e) {
-         // Fallback: try executing the command with --version
-         execSync(`${cmd} --version`, { stdio: "ignore" });
-         return true;
+         // Fallback 1: try executing the command with --version
+         try {
+           execSync(`${cmd} --version`, { stdio: "ignore" });
+           return true;
+         } catch (e2) {
+           // Fallback 2: check common global npm path
+           const appData = process.env.APPDATA;
+           if (appData) {
+             const npmPath = path.join(appData, "npm", `${cmd}.cmd`);
+             if (fs.existsSync(npmPath)) {
+               return true;
+             }
+           }
+           return false;
+         }
       }
     }
     const checkCmd = `command -v ${cmd}`;
